@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة كلمات كاجو</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f7e6c4;
+            color: #4a2c11;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .game-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(74, 44, 17, 0.15);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            border: 4px solid #d4a373;
+        }
+        h1 {
+            color: #a96b34;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .description {
+            font-size: 16px;
+            color: #7a5c3e;
+            margin-bottom: 25px;
+        }
+        .scrambled-word {
+            background-color: #faedcd;
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 5px;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            color: #4a2c11;
+            border: 2px dashed #d4a373;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            font-size: 20px;
+            border: 2px solid #ccd5ae;
+            border-radius: 12px;
+            outline: none;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #e9c46a;
+            box-shadow: 0 0 8px rgba(233, 196, 106, 0.5);
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            background-color: #e9c46a;
+            color: #4a2c11;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-bottom: 15px;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        .score-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .message {
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            min-height: 27px;
+        }
+        .success { color: #2a9d8f; }
+        .error { color: #e76f51; }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <h1>🥜 كلمات كاجو </h1>
+    <p class="description">رتب الحروف المبعثرة لتكتشف الكلمة الصحيحة!</p>
+    
+    <div class="scrambled-word" id="scrambledWord">ج و ك ا</div>
+    
+    <input type="text" id="userInput" placeholder="اكتب الكلمة الصحيحة هنا..." autocomplete="off">
+    
+    <button onclick="checkGuess()">تحقق من الإجابة 👍</button>
+    <button onclick="nextWord()" style="background-color: #ccd5ae;">تخطي الكلمة ➡️</button>
+    
+    <div class="message" id="message"></div>
+    
+    <div class="score-container">
+        <div>النقاط: <span id="score">0</span></div>
+        <div>المستوى: <span id="level">1</span></div>
+    </div>
+</div>
+
+<script>
+    const wordList = [
+        { correct: "كاجو", scrambled: "ج و ك ا" },
+        { correct: "تفاح", scrambled: "ح ا ف ت" },
+        { correct: "برمجة", scrambled: "ة م ج ر ب" },
+        { correct: "هاتف", scrambled: "ف ت ا ه" },
+        { correct: "موقع", scrambled: "ع ق و م" },
+        { correct: "لعبة", scrambled: "ة ب ع ل" },
+        { correct: "قهوة", scrambled: "ة و ه ق" }
+    ];
+
+    let currentIndex = 0;
+    let score = 0;
+    let level = 1;
+
+    function initGame() {
+        document.getElementById("scrambledWord").innerText = wordList[currentIndex].scrambled;
+        document.getElementById("userInput").value = "";
+        document.getElementById("message").innerText = "";
+    }
+
+    function checkGuess() {
+        const userGuess = document.getElementById("userInput").value.trim();
+        const correctAnswer = wordList[currentIndex].correct;
+        const messageElement = document.getElementById("message");
+
+        if (userGuess === correctAnswer) {
+            score += 10;
+            document.getElementById("score").innerText = score;
+            messageElement.innerText = "🎉 إجابة صحيحة، بطل!";
+            messageElement.className = "message success";
+            
+            if(score % 30 === 0) {
+                level++;
+                document.getElementById("level").innerText = level;
+            }
+            
+            setTimeout(nextWord, 1500);
+        } else {
+            messageElement.innerText = "❌ إجابة خاطئة، حاول مرة أخرى!";
+            messageElement.className = "message error";
+        }
+    }
+
+    function nextWord() {
+        currentIndex = (currentIndex + 1) % wordList.length;
+        initGame();
+    }
+
+    // تشغيل اللعبة فور تحميل الصفحة
+    window.onload = initGame;
+</script>
+
+</body>
+</html>
